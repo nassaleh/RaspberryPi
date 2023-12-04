@@ -1,18 +1,33 @@
 #include <stdbool.h>
-#include <cstdio>
+#include <stdio.h>
+#include <unistd.h>
+
+void part1();
 
 int main()
 {
+    part1();
+}
+
+void part1()
+{
     int gpio24 = 24;
 
-    FILE* led = fopen("/sys/class/gpio/gpio24/value", "w");
+    FILE *led = fopen("/sys/class/gpio/gpio24/value", "w");
 
-    while(true)
+    if (led == NULL)
     {
-        fprintf(led, "%d", 1);
-        sleep(1);
-        fprintf(led, "%d", 0);
-        sleep(1);
+        printf("Error");
     }
 
+    while (true)
+    {
+        fprintf(led, "%d", 1);
+        // fputs("1", led);
+        fflush(led);
+        sleep(1);
+        fprintf(led, "%d", 0);
+        fflush(led);
+        sleep(1);
+    }
 }
