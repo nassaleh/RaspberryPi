@@ -17,3 +17,5 @@ poll file for switch
 https://man7.org/linux/man-pages/man2/poll.2.html
 
 Use C library `poll` (look up man poll)
+
+https://www.youtube.com/watch?v=O-yMs3T0APU
