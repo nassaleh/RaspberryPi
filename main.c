@@ -6,16 +6,20 @@
 #include <fcntl.h>
 #include <unistd.h>
 #include <string.h>
+#include <poll.h>
 
-void part1();
+void led_blink();
+void led_blink_polling();
 void set_gpio_direction(int pin, const char *direction);
 
 int main()
 {
-    part1();
+    // led_blink();
+
+    led_blink_polling();
 }
 
-void part1()
+void led_blink()
 {
     // Init GPIO
     set_gpio_direction(17, "in");
@@ -37,7 +41,53 @@ void part1()
         // fgets(line, sizeof(line), button);
         size_t bytesRead = fread(line, sizeof(char), sizeof(line), button);
         fseek(button, 0, 0);
-        
+
+        if (line[0] == '1')
+        {
+            fprintf(led, "%d", 1);
+            // fputs("1", led);
+            fflush(led);
+            sleep(0.1);
+        }
+        else if (line[0] == '0')
+        {
+            fprintf(led, "%d", 0);
+            fflush(led);
+            sleep(0.1);
+        }
+
+        sleep(0.1);
+    }
+}
+
+void led_blink_polling()
+{
+    // Init GPIO
+    set_gpio_direction(17, "in");
+    set_gpio_direction(24, "out");
+
+    FILE *led = fopen("/sys/class/gpio/gpio24/value", "w");
+    FILE *button = fopen("/sys/class/gpio/gpio17/value", "r");
+
+    if (led == NULL)
+    {
+        printf("Error");
+    }
+
+    // init poll
+    struct pollfd mypoll;
+    memset(&mypoll, 0, sizeof(mypoll));
+    mypoll.fd = button;
+    mypoll.events = POLLIN | POLLPRI;
+
+
+    while (true)
+    {
+        char line[4];
+        if(poll(&mypoll, 0, 100) == 1)
+        {
+            read(button, line, sizeof(line));
+        }
 
         if (line[0] == '1')
         {
