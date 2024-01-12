@@ -77,16 +77,18 @@ void led_blink_polling()
     // init poll
     struct pollfd mypoll;
     memset(&mypoll, 0, sizeof(mypoll));
-    mypoll.fd = button;
-    mypoll.events = POLLIN | POLLPRI;
-
+    mypoll.fd = fileno(button);
+    mypoll.events = POLLERR | POLLPRI;
 
     while (true)
     {
         char line[4];
-        if(poll(&mypoll, 0, 100) == 1)
+        if (poll(&mypoll, 1, -1) == 1)
         {
-            read(button, line, sizeof(line));
+            if (lseek(fileno(button), 0, SEEK_SET) >= 0)
+            {
+                read(fileno(button), line, sizeof(line));
+            }
         }
 
         if (line[0] == '1')
