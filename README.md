@@ -25,3 +25,8 @@ https://www.youtube.com/watch?v=O-yMs3T0APU
 # Create `Make` files
 
 # Systemd service
+
+https://man7.org/linux/man-pages/man2/lseek.2.html
+
+# Linux Sockets
+BEEJ.us/guide
