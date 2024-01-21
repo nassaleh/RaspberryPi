@@ -1,3 +1,7 @@
+# Useful Links
+
+https://github.com/Projet-Sherbrooke
+
 # Part 1
 
 ## Make a program that reads from switch and makes light blink
@@ -30,3 +34,7 @@ https://man7.org/linux/man-pages/man2/lseek.2.html
 
 # Linux Sockets
 BEEJ.us/guide
+
+# Part 2
+Configure BMP280
+https://iotstarters.com/configuring-bmp280-sensor-with-raspberry-pi/
