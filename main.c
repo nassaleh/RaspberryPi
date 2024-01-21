@@ -12,6 +12,8 @@ void led_blink();
 void led_blink_polling();
 void set_gpio_direction(int pin, const char *direction);
 
+void SetGpioEdge(char edge_path[256], int pin);
+
 int main()
 {
     // led_blink();
@@ -111,12 +113,14 @@ void led_blink_polling()
 
 void set_gpio_direction(int pin, const char *direction)
 {
-    char export_path[50];
-    char direction_path[50];
+    char export_path[256];
+    char direction_path[256];
+    char edge_path[256];
 
     // Create the paths for export and direction files
     snprintf(export_path, sizeof(export_path), "/sys/class/gpio/export");
     snprintf(direction_path, sizeof(direction_path), "/sys/class/gpio/gpio%d/direction", pin);
+    snprintf(edge_path, sizeof(edge_path), "/sys/class/gpio/gpio%d/edge", pin);
 
     // Open /sys/class/gpio/export for writing
     int gpio_export_fd = open(export_path, O_WRONLY);
@@ -125,6 +129,8 @@ void set_gpio_direction(int pin, const char *direction)
         perror("Error opening export file");
         exit(EXIT_FAILURE);
     }
+
+    SetGpioEdge(edge_path, pin);
 
     // Write GPIO pin number to export file
     char pin_str[4];
@@ -167,4 +173,28 @@ void set_gpio_direction(int pin, const char *direction)
 
     // Close the direction file
     close(gpio_direction_fd);
+}
+
+void SetGpioEdge(char edge_path[256], int pin)
+{
+    // Set edge for gpio to be both. Triggers on going up and down
+    int edge_fd = open(edge_path, O_WRONLY);
+    if (edge_fd == -1)
+    {
+        perror("Error opening edge file");
+        exit(EXIT_FAILURE);
+    }
+    char edge_value[5] = "both";
+    if (write(edge_fd, edge_value, strlen(edge_value)) == -1)
+    {
+        perror("Error writing to edge file");
+        // close(gpio_export_fd);
+        // exit(EXIT_FAILURE);
+    }
+    else
+    {
+        printf("Edge value of pin %d set successfully\n", pin);
+    }
+
+    close(edge_fd);
 }
